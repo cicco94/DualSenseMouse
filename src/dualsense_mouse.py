@@ -3,7 +3,7 @@ import time
 from pynput.mouse import Controller, Button
 
 MOUSE_SPEED = 8
-DEADZONE = 0.08
+DEAD_ZONE = 0.08
 UPDATE_TIME = 0.004
 
 pygame.init()
@@ -46,14 +46,14 @@ print("PS             -> Exit")
 print()
 
 
-def deadzone(value):
-    if abs(value) < DEADZONE:
+def dead_zone(value):
+    if abs(value) < DEAD_ZONE:
         return 0.0
 
     if value > 0:
-        return (value - DEADZONE) / (1.0 - DEADZONE)
+        return (value - DEAD_ZONE) / (1.0 - DEAD_ZONE)
 
-    return (value + DEADZONE) / (1.0 - DEADZONE)
+    return (value + DEAD_ZONE) / (1.0 - DEAD_ZONE)
 
 
 def clamp(value, minimum, maximum):
@@ -96,7 +96,6 @@ try:
 
                     running = False
 
-
             # ------------------------------------------------
             # ON-RELEASE BUTTONS
             # ------------------------------------------------
@@ -109,7 +108,6 @@ try:
                     if cross_down:
                         mouse.release(Button.left)
                         cross_down = False
-
 
                 # O / Circle
                 elif event.button == 1:
@@ -127,10 +125,9 @@ try:
             x = joystick.get_axis(0)
             y = joystick.get_axis(1)
 
-            x = deadzone(x)
-            y = deadzone(y)
+            x = dead_zone(x)
+            y = dead_zone(y)
 
-            # Curva leggermente più morbida
             x = x * abs(x)
             y = y * abs(y)
 
