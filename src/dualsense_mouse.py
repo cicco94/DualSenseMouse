@@ -224,10 +224,6 @@ def dead_zone(value):
     return (value + DEAD_ZONE) / (1.0 - DEAD_ZONE)
 
 
-def clamp(value, minimum, maximum):
-    return max(minimum, min(value, maximum))
-
-
 cross_down = False
 circle_down = False
 running = True
