@@ -1,10 +1,24 @@
 import pygame
 import time
-from pynput.mouse import Controller, Button
 
-MOUSE_SPEED = 8
+from pynput.mouse import Controller, Button
+from pynput import keyboard
+
+# ============================================================
+# SETTINGS
+# ============================================================
+
+MOUSE_SPEED = 8.0
 DEAD_ZONE = 0.08
 UPDATE_TIME = 0.004
+
+SPEED_STEP = 1.0
+MIN_MOUSE_SPEED = 0.1
+MAX_MOUSE_SPEED = 100.0
+
+# ============================================================
+# INITIALIZATION
+# ============================================================
 
 pygame.init()
 pygame.joystick.init()
@@ -32,6 +46,68 @@ if joystick is None:
     joystick = pygame.joystick.Joystick(0)
     joystick.init()
 
+# ============================================================
+# KEYBOARD SPEED CONTROL
+# ============================================================
+
+s_pressed = False
+
+
+def on_key_press(key):
+
+    global s_pressed
+    global MOUSE_SPEED
+
+    # S pressed
+    if key == keyboard.KeyCode.from_char("s"):
+        s_pressed = True
+
+        return
+
+    # S + UP
+    if key == keyboard.Key.up and s_pressed:
+
+        MOUSE_SPEED = min(
+            MAX_MOUSE_SPEED,
+            MOUSE_SPEED + SPEED_STEP
+        )
+
+        print(f"Mouse Speed: {MOUSE_SPEED:.1f}")
+
+        return
+
+    # S + DOWN
+    if key == keyboard.Key.down and s_pressed:
+
+        MOUSE_SPEED = max(
+            MIN_MOUSE_SPEED,
+            MOUSE_SPEED - SPEED_STEP
+        )
+
+        print(f"Mouse Speed: {MOUSE_SPEED:.1f}")
+
+        return
+
+
+def on_key_release(key):
+
+    global s_pressed
+
+    if key == keyboard.KeyCode.from_char("s"):
+        s_pressed = False
+
+
+keyboard_listener = keyboard.Listener(
+    on_press=on_key_press,
+    on_release=on_key_release
+)
+
+keyboard_listener.start()
+
+# ============================================================
+# INFORMATION
+# ============================================================
+
 print()
 print("==========================================")
 print("        DualSense as Mouse")
@@ -40,11 +116,21 @@ print()
 print(f"Controller: {joystick.get_name()}")
 print()
 print("Left Stick -> Mouse")
-print("X              -> Left Click / Drag&Drop")
-print("O              -> Right Click / Drag&Drop")
-print("PS             -> Exit")
+print("X          -> Left Click / Drag&Drop")
+print("O          -> Right Click / Drag&Drop")
+print("PS         -> Exit")
+print()
+print("Keyboard:")
+print("S + UP     -> Increase Mouse Speed")
+print("S + DOWN   -> Decrease Mouse Speed")
+print()
+print(f"Mouse Speed: {MOUSE_SPEED:.1f}")
 print()
 
+
+# ============================================================
+# FUNCTIONS
+# ============================================================
 
 def dead_zone(value):
     if abs(value) < DEAD_ZONE:
@@ -57,7 +143,10 @@ def dead_zone(value):
 
 
 def clamp(value, minimum, maximum):
-    return max(minimum, min(value, maximum))
+    return max(
+        minimum,
+        min(value, maximum)
+    )
 
 
 cross_down = False
@@ -157,6 +246,9 @@ finally:
 
     if circle_down:
         mouse.release(Button.right)
+
+    # Stop keyboard listener
+    keyboard_listener.stop()
 
     pygame.quit()
 
