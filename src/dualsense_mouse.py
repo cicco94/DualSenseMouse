@@ -19,14 +19,14 @@ MAX_MOUSE_SPEED = 100.0
 
 user32 = ctypes.windll.user32
 
-MOUSEEVENTF_MOVE = 0x0001
-MOUSEEVENTF_LEFTDOWN = 0x0002
-MOUSEEVENTF_LEFTUP = 0x0004
-MOUSEEVENTF_RIGHTDOWN = 0x0008
-MOUSEEVENTF_RIGHTUP = 0x0010
+MOUSE_EVENT_MOVE = 0x0001
+MOUSE_EVENT_LEFT_DOWN = 0x0002
+MOUSE_EVENT_LEFT_UP = 0x0004
+MOUSE_EVENT_RIGHT_DOWN = 0x0008
+MOUSE_EVENT_RIGHT_UP = 0x0010
 
 
-class MOUSEINPUT(ctypes.Structure):
+class MouseInput(ctypes.Structure):
     _fields_ = [
         ("dx", ctypes.c_long),
         ("dy", ctypes.c_long),
@@ -37,10 +37,10 @@ class MOUSEINPUT(ctypes.Structure):
     ]
 
 
-class INPUT(ctypes.Structure):
+class Input(ctypes.Structure):
     _fields_ = [
         ("type", ctypes.c_ulong),
-        ("mi", MOUSEINPUT)
+        ("mi", MouseInput)
     ]
 
 
@@ -48,7 +48,7 @@ def send_mouse_event(flags, dx=0, dy=0):
 
     extra = ctypes.c_ulong(0)
 
-    mouse_input = MOUSEINPUT(
+    mouse_input = MouseInput(
         dx,
         dy,
         0,
@@ -57,7 +57,7 @@ def send_mouse_event(flags, dx=0, dy=0):
         ctypes.pointer(extra)
     )
 
-    input_data = INPUT(
+    input_data = Input(
         0,
         mouse_input
     )
@@ -65,14 +65,14 @@ def send_mouse_event(flags, dx=0, dy=0):
     user32.SendInput(
         1,
         ctypes.byref(input_data),
-        ctypes.sizeof(INPUT)
+        ctypes.sizeof(Input)
     )
 
 
 def mouse_move(dx, dy):
 
     send_mouse_event(
-        MOUSEEVENTF_MOVE,
+        MOUSE_EVENT_MOVE,
         dx,
         dy
     )
@@ -81,28 +81,28 @@ def mouse_move(dx, dy):
 def mouse_left_down():
 
     send_mouse_event(
-        MOUSEEVENTF_LEFTDOWN
+        MOUSE_EVENT_LEFT_DOWN
     )
 
 
 def mouse_left_up():
 
     send_mouse_event(
-        MOUSEEVENTF_LEFTUP
+        MOUSE_EVENT_LEFT_UP
     )
 
 
 def mouse_right_down():
 
     send_mouse_event(
-        MOUSEEVENTF_RIGHTDOWN
+        MOUSE_EVENT_RIGHT_DOWN
     )
 
 
 def mouse_right_up():
 
     send_mouse_event(
-        MOUSEEVENTF_RIGHTUP
+        MOUSE_EVENT_RIGHT_UP
     )
 
 
