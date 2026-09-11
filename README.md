@@ -1,5 +1,6 @@
 # DualSenseMouse
 App made to use PS5 controller as Mouse, check the use case below
+[https://github.com/cicco94/DualSenseMouse/blob/main/img/DualSenseMouse.jpeg](https://github.com/cicco94/DualSenseMouse/blob/main/img/DualSenseMouse.jpeg)
 
 ## Prerequisites
 1. have python working on your machine
